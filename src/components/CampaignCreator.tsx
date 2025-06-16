@@ -651,13 +651,13 @@ export default function CampaignCreator() {
                 <h3 className="text-xl font-bold text-gray-900 mb-4">6. Как собранные креативы выглядят в линию по статике</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="../src/assets/статика1.png" alt="Креатив 1" className="w-full h-full object-cover rounded" />
+                    <img src="/assets/статика1.png" alt="Креатив 1" className="w-full h-full object-cover rounded" />
                   </div>
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="../src/assets/статика2.png" alt="Креатив 2" className="w-full h-full object-cover rounded" />
+                    <img src="/assets/статика2.png" alt="Креатив 2" className="w-full h-full object-cover rounded" />
                   </div>
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="../src/assets/статика3.png" alt="Креатив 3" className="w-full h-full object-cover rounded" />
+                    <img src="/assets/статика3.png" alt="Креатив 3" className="w-full h-full object-cover rounded" />
                   </div>
                 </div>
               </div>
