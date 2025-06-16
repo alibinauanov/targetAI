@@ -215,7 +215,7 @@ export default function CampaignCreator() {
       id: 'statistics', 
       title: 'Статистика', 
       preview: 'Цифры что показывают пользу продукта', 
-      imageUrl: 'https://images.pexels.com/photos/590022/pexels-photo-590022.jpg?auto=compress&cs=tinysrgb&w=400'
+      imageUrl: 'https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=400'
     }
   ];
 
@@ -224,7 +224,7 @@ export default function CampaignCreator() {
       id: 'video-testimonial', 
       title: 'Отзыв клиента', 
       preview: 'Видео/аудио отзыв', 
-      imageUrl: 'https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpg?auto=compress&cs=tinysrgb&w=400' 
+      imageUrl: 'https://images.pexels.com/photos/5662857/pexels-photo-5662857.jpeg?auto=compress&cs=tinysrgb&w=400' 
     },
     { 
       id: 'video-meme', 
@@ -651,13 +651,13 @@ export default function CampaignCreator() {
                 <h3 className="text-xl font-bold text-gray-900 mb-4">6. Как собранные креативы выглядят в линию по статике</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="/src/assets/статика1.png" alt="Креатив 1" className="w-full h-full object-cover rounded" />
+                    <img src="../src/assets/статика1.png" alt="Креатив 1" className="w-full h-full object-cover rounded" />
                   </div>
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="/src/assets/статика2.png" alt="Креатив 2" className="w-full h-full object-cover rounded" />
+                    <img src="../src/assets/статика2.png" alt="Креатив 2" className="w-full h-full object-cover rounded" />
                   </div>
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="/src/assets/статика3.png" alt="Креатив 3" className="w-full h-full object-cover rounded" />
+                    <img src="../src/assets/статика3.png" alt="Креатив 3" className="w-full h-full object-cover rounded" />
                   </div>
                 </div>
               </div>
