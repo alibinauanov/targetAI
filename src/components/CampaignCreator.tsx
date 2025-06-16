@@ -191,7 +191,7 @@ export default function CampaignCreator() {
       id: 'testimonial', 
       title: 'Отзыв клиента', 
       preview: 'Текст отзыв от клиента', 
-      imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' 
+      imageUrl: 'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=400' 
     },
     { 
       id: 'meme', 
@@ -224,7 +224,7 @@ export default function CampaignCreator() {
       id: 'video-testimonial', 
       title: 'Отзыв клиента', 
       preview: 'Видео/аудио отзыв', 
-      imageUrl: 'https://images.pexels.com/photos/5662857/pexels-photo-5662857.jpeg?auto=compress&cs=tinysrgb&w=400' 
+      imageUrl: 'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=400' 
     },
     { 
       id: 'video-meme', 
