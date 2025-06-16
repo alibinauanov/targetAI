@@ -191,7 +191,7 @@ export default function CampaignCreator() {
       id: 'testimonial', 
       title: 'Отзыв клиента', 
       preview: 'Текст отзыв от клиента', 
-      imageUrl: 'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=400' 
+      imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' 
     },
     { 
       id: 'meme', 
@@ -651,13 +651,13 @@ export default function CampaignCreator() {
                 <h3 className="text-xl font-bold text-gray-900 mb-4">6. Как собранные креативы выглядят в линию по статике</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="/статика1.png" alt="Креатив 1" className="w-full h-full object-cover rounded" />
+                    <img src="/статика1.png" alt="Креатив 1" className="w-full h-full object-contain rounded" />
                   </div>
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="/статика2.png" alt="Креатив 2" className="w-full h-full object-cover rounded" />
+                    <img src="/статика2.png" alt="Креатив 2" className="w-full h-full object-contain rounded" />
                   </div>
                   <div className="aspect-square bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="/статика3.png" alt="Креатив 3" className="w-full h-full object-cover rounded" />
+                    <img src="/статика3.png" alt="Креатив 3" className="w-full h-full object-contain rounded" />
                   </div>
                 </div>
               </div>
