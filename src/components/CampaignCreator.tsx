@@ -254,6 +254,24 @@ export default function CampaignCreator() {
 
   const currentTemplates = campaignData.creativeFormat === 'image' ? staticTemplates : videoTemplates;
 
+  const downloadAssets = () => {
+    const files = [
+      '/campaign.pdf',
+      '/статика1.png',
+      '/статика2.png',
+      '/статика3.png'
+    ];
+
+    files.forEach(file => {
+      const link = document.createElement('a');
+      link.href = file;
+      link.download = file.split('/').pop() || '';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* Progress Steps */}
@@ -556,7 +574,7 @@ export default function CampaignCreator() {
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Получаете PDF с информацией для запуска</h2>
-              <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+              <button onClick={downloadAssets} className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                 <Download className="h-4 w-4" />
                 <span>Скачать PDF</span>
               </button>
