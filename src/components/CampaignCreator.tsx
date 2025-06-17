@@ -98,6 +98,34 @@ export default function CampaignCreator() {
     }));
   };
 
+  const handleDownloadPDFWithHDCreatives = () => {
+    // In a real app, this would call your backend API to generate the PDF
+    console.log("Generating PDF with HD creatives...");
+    
+    // Create download links for each creative in HD
+    const creatives = ['статика1', 'статика2', 'статика3'];
+    
+    creatives.forEach((creative, index) => {
+      // This would point to your actual HD image files in production
+      const hdImageUrl = `/${creative}-hd.png`; // -hd suffix for high resolution
+      
+      const link = document.createElement('a');
+      link.href = hdImageUrl;
+      link.download = `creative_${index + 1}_1080p.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Download the PDF report
+    const pdfLink = document.createElement('a');
+    pdfLink.href = '/campaign-report.pdf'; // Your generated PDF endpoint
+    pdfLink.download = `campaign_report_${new Date().toISOString().split('T')[0]}.pdf`;
+    document.body.appendChild(pdfLink);
+    pdfLink.click();
+    document.body.removeChild(pdfLink);
+  };
+
   const generateCampaign = async () => {
     setIsGenerating(true);
     setGenerationProgress(0);
@@ -556,7 +584,7 @@ export default function CampaignCreator() {
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Получаете PDF с информацией для запуска</h2>
-              <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+              <button onClick={handleDownloadPDFWithHDCreatives} className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                 <Download className="h-4 w-4" />
                 <span>Скачать PDF</span>
               </button>
