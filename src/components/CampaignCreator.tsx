@@ -99,31 +99,79 @@ export default function CampaignCreator() {
   };
 
   const handleDownloadPDFWithHDCreatives = () => {
-    // In a real app, this would call your backend API to generate the PDF
-    console.log("Generating PDF with HD creatives...");
-    
-    // Create download links for each creative in HD
-    const creatives = ['статика1', 'статика2', 'статика3'];
-    
-    creatives.forEach((creative, index) => {
-      // This would point to your actual HD image files in production
-      const hdImageUrl = `/${creative}-hd.png`; // -hd suffix for high resolution
-      
+    // Create download links for each HD creative
+    ['статика1.png', 'статика2.png', 'статика3.png'].forEach((fileName, index) => {
       const link = document.createElement('a');
-      link.href = hdImageUrl;
-      link.download = `creative_${index + 1}_1080p.png`;
+      link.href = `/${fileName}`;
+      link.download = `creative_${index + 1}_${fileName}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     });
 
-    // Download the PDF report
-    const pdfLink = document.createElement('a');
-    pdfLink.href = '/campaign-report.pdf'; // Your generated PDF endpoint
-    pdfLink.download = `campaign_report_${new Date().toISOString().split('T')[0]}.pdf`;
-    document.body.appendChild(pdfLink);
-    pdfLink.click();
-    document.body.removeChild(pdfLink);
+    // Create a PDF with these images (client-side generation example)
+    generatePDFWithImages();
+  };
+
+  // PDF generation function using jsPDF
+  const generatePDFWithImages = async () => {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.text('Your Campaign Materials', 105, 20, { align: 'center' });
+      
+      // Add campaign details
+      doc.setFontSize(12);
+      doc.text(`Offer: ${campaignData.offer}`, 15, 40);
+      doc.text(`Audience: ${campaignData.audience}`, 15, 50);
+      
+      // Load and add images to PDF
+      let yPosition = 70;
+      const imageHeight = 60;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 15;
+      
+      await Promise.all(
+        ['статика1.png', 'статика2.png', 'статика3.png'].map(async (fileName, index) => {
+          const img = new Image();
+          img.src = `/${fileName}`;
+          
+          await new Promise((resolve) => {
+            img.onload = () => {
+              const ratio = img.width / img.height;
+              const imgWidth = pageWidth - 2 * margin;
+              const imgHeight = imgWidth / ratio;
+              
+              // Add page if needed
+              if (yPosition + imgHeight > doc.internal.pageSize.getHeight() - 20) {
+                doc.addPage();
+                yPosition = 20;
+              }
+              
+              doc.addImage(img, 'PNG', margin, yPosition, imgWidth, imgHeight);
+              yPosition += imgHeight + 10;
+              
+              // Add caption
+              doc.text(`Creative ${index + 1}`, margin, yPosition);
+              yPosition += 10;
+              
+              resolve(null);
+            };
+          });
+        })
+      );
+      
+      // Save the PDF
+      doc.save(`campaign_materials_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    }
   };
 
   const generateCampaign = async () => {
