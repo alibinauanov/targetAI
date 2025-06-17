@@ -98,120 +98,6 @@ export default function CampaignCreator() {
     }));
   };
 
-  const handleDownloadAllMaterials = async () => {
-    try {
-      // 1. First download the images individually
-      const imageFiles = ['статика1.png', 'статика2.png', 'статика3.png'];
-      
-      for (const fileName of imageFiles) {
-        // Use absolute path for public files
-        const response = await fetch(`/${fileName}`);
-        if (!response.ok) throw new Error(`Failed to fetch ${fileName}`);
-        
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        
-        // Clean up
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(link);
-      }
-
-      // 2. Then generate and download the PDF
-      await generatePDFWithImages();
-      
-    } catch (error) {
-      console.error('Download error:', error);
-      alert('Some files failed to download. Please check the console for details.');
-    }
-  };
-
-  // PDF generation function (updated)
-  const generatePDFWithImages = async () => {
-    try {
-      const { jsPDF } = await import('jspdf');
-      const doc = new jsPDF();
-      
-      // Add metadata
-      doc.setProperties({
-        title: `Campaign Materials - ${new Date().toLocaleDateString()}`,
-        creator: 'Your App Name'
-      });
-
-      // Add title
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(22);
-      doc.text('Your Campaign Materials', 105, 20, { align: 'center' });
-      
-      // Add campaign details
-      doc.setFontSize(12);
-      let yPosition = 40;
-      
-      doc.text(`Offer: ${campaignData.offer || 'Not specified'}`, 15, yPosition);
-      yPosition += 10;
-      doc.text(`Target Audience: ${campaignData.audience || 'Not specified'}`, 15, yPosition);
-      yPosition += 20;
-
-      // Add images
-      const imageFiles = ['статика1.png', 'статика2.png', 'статика3.png'];
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const margin = 15;
-      const maxImageWidth = pageWidth - 2 * margin;
-      
-      for (const fileName of imageFiles) {
-        try {
-          // Load image from public folder
-          const img = new Image();
-          img.src = `/${fileName}`;
-          
-          await new Promise((resolve, reject) => {
-            img.onload = () => {
-              // Calculate dimensions maintaining aspect ratio
-              const ratio = img.width / img.height;
-              const imgWidth = Math.min(maxImageWidth, img.width);
-              const imgHeight = imgWidth / ratio;
-              
-              // Add new page if needed
-              if (yPosition + imgHeight > doc.internal.pageSize.getHeight() - 20) {
-                doc.addPage();
-                yPosition = 20;
-              }
-              
-              // Add image to PDF
-              doc.addImage(img, 'PNG', margin, yPosition, imgWidth, imgHeight);
-              yPosition += imgHeight + 10;
-              
-              // Add image title
-              doc.text(fileName.replace('.png', ''), margin, yPosition);
-              yPosition += 10;
-              
-              resolve(true);
-            };
-            
-            img.onerror = () => {
-              console.warn(`Failed to load image: ${fileName}`);
-              resolve(false); // Continue with next image
-            };
-          });
-        } catch (imgError) {
-          console.error(`Error processing ${fileName}:`, imgError);
-        }
-      }
-      
-      // Save PDF
-      doc.save(`campaign_materials_${new Date().toISOString().split('T')[0]}.pdf`);
-      
-    } catch (error) {
-      console.error('PDF generation failed:', error);
-      throw error;
-    }
-  };
-
   const generateCampaign = async () => {
     setIsGenerating(true);
     setGenerationProgress(0);
@@ -669,8 +555,8 @@ export default function CampaignCreator() {
         <div className="space-y-6">
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Скачать</h2>
-              <button onClick={handleDownloadAllMaterials} className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+              <h2 className="text-2xl font-bold text-gray-900">Получаете PDF с информацией для запуска</h2>
+              <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                 <Download className="h-4 w-4" />
                 <span>Скачать PDF</span>
               </button>
