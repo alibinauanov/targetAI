@@ -24,15 +24,14 @@ const MetricCard = ({
   value: string;
   change: string;
   icon: any;
-  status?: 'good' | 'warning' | 'bad';
+  status?: 'good' | 'bad';
 }) => {
   const statusColors = {
     good: 'text-green-600 bg-green-50',
-    warning: 'text-yellow-600 bg-yellow-50',
     bad: 'text-red-600 bg-red-50'
   };
 
-  const changeColor = change.startsWith('+') ? 'text-green-600' : 'text-red-600';
+  const changeColor = status === 'good' ? 'text-green-600' : 'text-red-600';
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
@@ -41,16 +40,13 @@ const MetricCard = ({
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-2xl font-bold mt-1 text-gray-900">{value}</p>
           <div className="flex items-center mt-2">
-            {change.startsWith('+') ? (
+            {status === 'good' ? (
               <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
             ) : (
               <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
             )}
             <span className={`text-sm font-medium ${changeColor}`}>
               {change}
-            </span>
-            <span className="text-sm text-gray-500 ml-1">
-              {status === 'good' ? '(соответствует плану)' : status === 'bad' ? '(не соответствует плану)' : ''}
             </span>
           </div>
         </div>
@@ -64,22 +60,20 @@ const MetricCard = ({
 
 const StatusItem = ({ 
   label, 
-  status, 
   description,
   statusType
 }: {
   label: string;
-  status: 'success' | 'warning' | 'error';
   description: string;
   statusType: 'good' | 'warning' | 'bad';
 }) => {
   const statusConfig = {
-    success: { icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
+    good: { icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
     warning: { icon: AlertTriangle, color: 'text-yellow-600', bg: 'bg-yellow-50' },
-    error: { icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50' }
+    bad: { icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50' }
   };
 
-  const config = statusConfig[status];
+  const config = statusConfig[statusType];
   const Icon = config.icon;
 
   return (
@@ -88,13 +82,6 @@ const StatusItem = ({
       <div>
         <div className="flex items-center space-x-2">
           <p className="font-medium text-gray-900">{label}</p>
-          <span className={`text-xs px-2 py-1 rounded-full ${
-            statusType === 'good' ? 'bg-green-100 text-green-700' :
-            statusType === 'warning' ? 'bg-yellow-100 text-yellow-700' :
-            'bg-red-100 text-red-700'
-          }`}>
-            {statusType === 'good' ? 'зеленый' : statusType === 'warning' ? 'желтый' : 'красный'}
-          </span>
         </div>
         <p className="text-sm text-gray-600">{description}</p>
       </div>
@@ -102,27 +89,46 @@ const StatusItem = ({
   );
 };
 
-const HandOnPulseTable = () => {
+const RNPCell = ({ percent }: { percent: string }) => {
+  const numericPercent = parseFloat(percent.replace('%', ''));
+  let colorClass = '';
+  
+  if (numericPercent <= 50) {
+    colorClass = 'text-red-600';
+  } else if (numericPercent <= 80) {
+    colorClass = 'text-yellow-600';
+  } else {
+    colorClass = 'text-green-600';
+  }
+
+  return (
+    <span className={`font-medium ${colorClass}`}>
+      {percent}
+    </span>
+  );
+};
+
+const RNPTable = () => {
   const data = [
-    { metric: 'Рекламный бюджет', plan: '$2,000', fact: '$494.03', percent: '24.70%', status: 'good' },
-    { metric: 'Показы', plan: '195,122', fact: '49,040', percent: '25.13%', status: 'good' },
-    { metric: 'Охваты', plan: '130,081', fact: '19,938', percent: '15.33%', status: 'warning' },
-    { metric: 'CTR %', plan: '1.15%', fact: '0.99%', percent: '86.00%', status: 'bad' },
-    { metric: 'Кол-во Кликов', plan: '2,244', fact: '485', percent: '21.61%', status: 'good' },
-    { metric: 'Конверсия Клики-Лиды', plan: '20.79%', fact: '17.73%', percent: '85.29%', status: 'warning' },
-    { metric: 'Кол-во лидов', plan: '467', fact: '86', percent: '18.43%', status: 'good' },
-    { metric: 'Конверсия в покупку', plan: '3%', fact: '33%', percent: '1010.10%', status: 'good' },
-    { metric: 'Средний чек', plan: '$683', fact: '$616.22', percent: '90.22%', status: 'good' },
-    { metric: 'Выручка', plan: '$10,245', fact: '$2,464.88', percent: '24.06%', status: 'good' },
-    { metric: 'ROMI', plan: '412%', fact: '399%', percent: '96.77%', status: 'good' },
-    { metric: 'CAC', plan: '$133.33', fact: '$123.51', percent: '92.63%', status: 'good' },
-    { metric: 'CPL - Цена Лида', plan: '$4.29', fact: '$5.74', percent: '133.99%', status: 'bad' }
+    { metric: 'Рекламный бюджет', plan: '$2,000', fact: '$494.03', percent: '24.70%' },
+    { metric: 'Показы', plan: '195,122', fact: '49,040', percent: '25.13%' },
+    { metric: 'Охваты', plan: '130,081', fact: '19,938', percent: '15.33%' },
+    { metric: 'CTR %', plan: '1.15%', fact: '0.99%', percent: '86.00%' },
+    { metric: 'Кол-во Кликов', plan: '2,244', fact: '485', percent: '21.61%' },
+    { metric: 'Конверсия Клики-Лиды', plan: '20.79%', fact: '17.73%', percent: '85.29%' },
+    { metric: 'Кол-во лидов', plan: '467', fact: '86', percent: '18.43%' },
+    { metric: 'Конверсия в покупку', plan: '3%', fact: '33%', percent: '1010.10%' },
+    { metric: 'Средний чек', plan: '$683', fact: '$616.22', percent: '90.22%' },
+    { metric: 'Выручка', plan: '$10,245', fact: '$2,464.88', percent: '24.06%' },
+    { metric: 'ROMI', plan: '412%', fact: '399%', percent: '96.77%' },
+    { metric: 'CAC', plan: '$133.33', fact: '$123.51', percent: '92.63%' },
+    { metric: 'CPL - Цена Лида', plan: '$4.29', fact: '$5.74', percent: '133.99%' }
   ];
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
       <div className="p-6 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900">Рука На Пульсе</h2>
+        <h2 className="text-xl font-bold text-gray-900">РНП</h2>
         <p className="text-sm text-gray-600 mt-1">Показатели по дням - College Hub</p>
       </div>
       <div className="overflow-x-auto">
@@ -132,8 +138,7 @@ const HandOnPulseTable = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Метрика</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">План</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Факт</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">%</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% выполнения</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -142,15 +147,8 @@ const HandOnPulseTable = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{row.metric}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{row.plan}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{row.fact}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{row.percent}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    row.status === 'good' ? 'bg-green-100 text-green-800' :
-                    row.status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {row.status === 'good' ? '✓ План' : row.status === 'warning' ? '⚠ Внимание' : '✗ Не план'}
-                  </span>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <RNPCell percent={row.percent} />
                 </td>
               </tr>
             ))}
@@ -224,31 +222,26 @@ export default function Dashboard() {
           <div className="space-y-4">
             <StatusItem
               label="Расходование бюджета"
-              status="success"
               description="идет по плану"
               statusType="good"
             />
             <StatusItem
               label="UTM метки"
-              status="success"
               description="установлены и в работе"
               statusType="good"
             />
             <StatusItem
               label="Показатель CTR"
-              status="error"
               description="ниже нормы для ниши (1%). нужно поменять креативы"
               statusType="bad"
             />
             <StatusItem
               label="Модерация креативов"
-              status="success"
               description="не представляет угрозы"
               statusType="good"
             />
             <StatusItem
               label="Соответствие метрик"
-              status="warning"
               description="Большинство метрик идет по плану, но есть над чем поработать"
               statusType="warning"
             />
@@ -302,8 +295,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Hand on Pulse Table */}
-      <HandOnPulseTable />
+      {/* RNP Table */}
+      <RNPTable />
     </div>
   );
 }
