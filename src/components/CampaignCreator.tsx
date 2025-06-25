@@ -2,11 +2,20 @@ import React, { useState } from 'react';
 import { Upload, FileText, Users, Zap, Download, CheckCircle, AlertTriangle, Image, Video, Grid3X3, BarChart3 } from 'lucide-react';
 
 interface CampaignData {
-  offer: string;
+  companyName: string;
+  niche: string;
   audience: string;
-  files: File[];
+  offer: string;
+  adNetwork: string;
+  adGoal: string;
+  adFormat: string;
+  adStyle: string;
+  textStyle: string;
   fbReport: File | null;
-  creativeFormat: 'image' | 'video' | null;
+  creativeType: 'static' | 'video' | null;
+  files: File[];
+  personaUpload: boolean | null;
+  personaFile: File | null;
   selectedTemplates: string[];
 }
 
@@ -68,11 +77,20 @@ const ProgressBar = ({ progress }: { progress: number }) => (
 export default function CampaignCreator() {
   const [step, setStep] = useState(1);
   const [campaignData, setCampaignData] = useState<CampaignData>({
-    offer: '',
+    companyName: '',
+    niche: '',
     audience: '',
-    files: [],
+    offer: '',
+    adNetwork: '',
+    adGoal: '',
+    adFormat: '',
+    adStyle: '',
+    textStyle: '',
     fbReport: null,
-    creativeFormat: null,
+    creativeType: null,
+    files: [],
+    personaUpload: null,
+    personaFile: null,
     selectedTemplates: []
   });
   const [isGenerating, setIsGenerating] = useState(false);
@@ -252,7 +270,7 @@ export default function CampaignCreator() {
     }
   ];
 
-  const currentTemplates = campaignData.creativeFormat === 'image' ? staticTemplates : videoTemplates;
+  const currentTemplates = campaignData.creativeType === 'static' ? staticTemplates : videoTemplates;
 
   const downloadAssets = () => {
     const files = [
@@ -276,79 +294,83 @@ export default function CampaignCreator() {
     <div className="max-w-4xl mx-auto p-6">
       {/* Progress Steps */}
       <div className="flex items-center justify-center mb-8">
-        {[1, 2, 3, 4].map((num) => (
+        {[1, 2, 3, 4, 5].map((num) => (
           <div key={num} className="flex items-center">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
               step >= num ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
             }`}>
               {num}
             </div>
-            {num < 4 && <div className={`w-16 h-1 mx-2 ${step > num ? 'bg-purple-600' : 'bg-gray-200'}`} />}
+            {num < 5 && <div className={`w-16 h-1 mx-2 ${step > num ? 'bg-purple-600' : 'bg-gray-200'}`} />}
           </div>
         ))}
       </div>
 
-      {/* Step 1: Basic Info */}
+      {/* Step 1: Company Info */}
       {step === 1 && (
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Введите информацию про компанию, оффер и аудиторию</h2>
-          <p className="text-gray-600 mb-6">Расскажите о вашем продукте и целевой аудитории</p>
-          
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Введите инфу про компанию</h2>
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Название компании
-              </label>
-              <input
-                type="text"
-                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Введите название вашей компании..."
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-2">Название компании</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.companyName} onChange={e => setCampaignData(prev => ({ ...prev, companyName: e.target.value }))} />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ваше предложение (оффер)
-              </label>
-              <textarea
-                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-                rows={3}
-                placeholder="Опишите ваш продукт/услугу и что вы предлагаете..."
-                value={campaignData.offer}
-                onChange={(e) => setCampaignData(prev => ({ ...prev, offer: e.target.value }))}
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-2">Ниша</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.niche} onChange={e => setCampaignData(prev => ({ ...prev, niche: e.target.value }))} />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Целевая аудитория
-              </label>
-              <textarea
-                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-                rows={3}
-                placeholder="Опишите вашу целевую аудиторию, демографию, интересы..."
-                value={campaignData.audience}
-                onChange={(e) => setCampaignData(prev => ({ ...prev, audience: e.target.value }))}
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-2">Целевая аудитория (ЛПР и ЛВР)</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.audience} onChange={e => setCampaignData(prev => ({ ...prev, audience: e.target.value }))} />
             </div>
-
-            {/* Facebook Report Upload Block */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Отчет из Facebook кабинета
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Ваш оффер</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.offer} onChange={e => setCampaignData(prev => ({ ...prev, offer: e.target.value }))} />
+            </div>
+          </div>
+          <div className="mt-8 flex justify-end">
+            <button onClick={() => setStep(2)} disabled={!campaignData.companyName || !campaignData.niche || !campaignData.audience || !campaignData.offer} className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">Далее</button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Ad Info */}
+      {step === 2 && (
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Введите инфу про желаемой рекламе</h2>
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Соцсеть</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.adNetwork} onChange={e => setCampaignData(prev => ({ ...prev, adNetwork: e.target.value }))} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Цель рекламы</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.adGoal} onChange={e => setCampaignData(prev => ({ ...prev, adGoal: e.target.value }))} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Формат объявления</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.adFormat} onChange={e => setCampaignData(prev => ({ ...prev, adFormat: e.target.value }))} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Рекламный стиль</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.adStyle} onChange={e => setCampaignData(prev => ({ ...prev, adStyle: e.target.value }))} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Стиль текста</label>
+              <input type="text" className="w-full p-4 border border-gray-300 rounded-lg" value={campaignData.textStyle} onChange={e => setCampaignData(prev => ({ ...prev, textStyle: e.target.value }))} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Отчет из Facebook кабинета</label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors">
-                <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">
-                  Загрузите отчет из Facebook Ads Manager для анализа
-                </p>
-                <p className="text-sm text-gray-500 mb-4">
-                  Поддерживаются форматы: .csv, .xlsx, .xls
-                </p>
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 mb-4">
+                  <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" /></svg>
+                </span>
+                <p className="text-gray-600 mb-2">Загрузите отчет из Facebook Ads Manager для анализа</p>
+                <p className="text-sm text-gray-500 mb-4">Поддерживаются форматы: .csv, .xlsx, .xls</p>
                 <input
                   type="file"
                   accept=".csv,.xlsx,.xls"
-                  onChange={handleFbReportUpload}
+                  onChange={e => setCampaignData(prev => ({ ...prev, fbReport: e.target.files?.[0] || null }))}
                   className="hidden"
                   id="fb-report-upload"
                 />
@@ -356,204 +378,114 @@ export default function CampaignCreator() {
                   htmlFor="fb-report-upload"
                   className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
                 >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Выбрать файл отчета
+                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" /></svg>
+                  Выбрать файл
                 </label>
                 {campaignData.fbReport && (
                   <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                     <div className="flex items-center justify-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-sm text-green-700 font-medium">
-                        {campaignData.fbReport.name}
-                      </span>
+                      <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      <span className="text-sm text-green-700 font-medium">{campaignData.fbReport.name}</span>
                     </div>
-                    <p className="text-xs text-green-600 mt-1">
-                      Файл загружен и готов к анализу
-                    </p>
+                    <p className="text-xs text-green-600 mt-1">Файл загружен и готов к анализу</p>
                   </div>
                 )}
               </div>
-              <div className="mt-2 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-700">
-                  <strong>Важно:</strong> Отчет из Facebook кабинета необходим для создания точной аналитики и рекомендаций по оптимизации кампаний
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-700">
-                <strong>Совет:</strong> Чем подробнее вы опишете ваш оффер и аудиторию, тем точнее будет сгенерированная кампания
-              </p>
             </div>
           </div>
-
-          <div className="mt-8 flex justify-end">
-            <button
-              onClick={() => setStep(2)}
-              disabled={!campaignData.offer || !campaignData.audience}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              Далее: Выбор формата
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 2: Creative Format Selection */}
-      {step === 2 && (
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Выберите подходящий формат</h2>
-          <p className="text-gray-600 mb-6">Какой тип креативов лучше всего подходит для вашего продукта?</p>
-          
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div 
-              className={`border-2 rounded-xl p-6 cursor-pointer transition-all ${
-                campaignData.creativeFormat === 'image' 
-                  ? 'border-purple-500 bg-purple-50' 
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={() => setCampaignData(prev => ({ ...prev, creativeFormat: 'image' }))}
-            >
-              <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-lg mb-4 mx-auto">
-                <Image className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-center mb-2">Статика</h3>
-              <p className="text-sm text-gray-600 text-center">Изображения, инфографика, карусели</p>
-              <div className="mt-4 text-center">
-                <span className="text-xs text-gray-500">Загрузить свои креативы</span>
-              </div>
-            </div>
-
-            <div 
-              className={`border-2 rounded-xl p-6 cursor-pointer transition-all ${
-                campaignData.creativeFormat === 'video' 
-                  ? 'border-purple-500 bg-purple-50' 
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={() => setCampaignData(prev => ({ ...prev, creativeFormat: 'video' }))}
-            >
-              <div className="flex items-center justify-center w-16 h-16 bg-red-100 rounded-lg mb-4 mx-auto">
-                <Video className="h-8 w-8 text-red-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-center mb-2">Видео</h3>
-              <p className="text-sm text-gray-600 text-center">Демо продукта, отзывы, анимация</p>
-              <div className="mt-4 text-center">
-                <span className="text-xs text-gray-500">Загрузить свои креативы</span>
-              </div>
-            </div>
-          </div>
-
-          {campaignData.creativeFormat && (
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-400 transition-colors">
-              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-2">
-                Загрузите ваши {campaignData.creativeFormat === 'image' ? 'изображения' : 'видео'}
-              </p>
-              <input
-                type="file"
-                multiple
-                accept={campaignData.creativeFormat === 'image' ? 'image/*' : 'video/*'}
-                onChange={handleFileUpload}
-                className="hidden"
-                id="file-upload"
-              />
-              <label
-                htmlFor="file-upload"
-                className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 cursor-pointer transition-colors"
-              >
-                Выбрать файлы
-              </label>
-              {campaignData.files.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-sm text-gray-600 mb-2">Загружено файлов: {campaignData.files.length}</p>
-                </div>
-              )}
-            </div>
-          )}
-
           <div className="mt-8 flex justify-between">
-            <button
-              onClick={() => setStep(1)}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-            >
-              Назад
-            </button>
-            <button
-              onClick={() => setStep(3)}
-              disabled={!campaignData.creativeFormat}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              Далее: Выбор шаблонов
-            </button>
+            <button onClick={() => setStep(1)} className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors">Назад</button>
+            <button onClick={() => setStep(3)} disabled={!campaignData.adNetwork || !campaignData.adGoal || !campaignData.adFormat || !campaignData.adStyle || !campaignData.textStyle} className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">Далее</button>
           </div>
         </div>
       )}
 
-      {/* Step 3: Template Selection */}
+      {/* Step 3: Creative Type */}
       {step === 3 && (
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Выберите подходящий шаблон</h2>
-          <p className="text-gray-600 mb-6">Выберите один или несколько шаблонов для вашей кампании</p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-            {currentTemplates.map((template) => (
-              <CreativeTemplate
-                key={template.id}
-                id={template.id}
-                title={template.title}
-                preview={template.preview}
-                isSelected={campaignData.selectedTemplates.includes(template.id)}
-                onSelect={handleTemplateSelect}
-                imageUrl={template.imageUrl}
-              />
-            ))}
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Введите тип креатива</h2>
+          <div className="flex gap-8 justify-center mt-8">
+            <button onClick={() => setCampaignData(prev => ({ ...prev, creativeType: 'static' }))} className={`w-40 h-40 rounded-xl border-2 flex flex-col items-center justify-center text-lg font-semibold ${campaignData.creativeType === 'static' ? 'border-purple-600 bg-purple-50' : 'border-gray-300'}`}>статика</button>
+            <button onClick={() => setCampaignData(prev => ({ ...prev, creativeType: 'video' }))} className={`w-40 h-40 rounded-xl border-2 flex flex-col items-center justify-center text-lg font-semibold ${campaignData.creativeType === 'video' ? 'border-purple-600 bg-purple-50' : 'border-gray-300'}`}>видео</button>
           </div>
-
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-600">
-              <strong>Выбрано шаблонов:</strong> {campaignData.selectedTemplates.length}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Рекомендуется выбрать 2-3 шаблона для A/B тестирования
-            </p>
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-yellow-800 mb-2">Подтвердите</h3>
-            <p className="text-sm text-yellow-700">
-              Выбранный шаблон и все введенная информация будут использованы для генерации кампании
-            </p>
-          </div>
-
           <div className="mt-8 flex justify-between">
+            <button onClick={() => setStep(2)} className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors">Назад</button>
+            <button onClick={() => setStep(4)} disabled={!campaignData.creativeType} className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">Далее</button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 4: Persona Upload */}
+      {step === 4 && (
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Загрузить своего персонажа?</h2>
+          <div className="flex gap-8 justify-center mt-8">
+            <button onClick={() => setCampaignData(prev => ({ ...prev, personaUpload: false }))} className={`w-40 h-40 rounded-xl border-2 flex flex-col items-center justify-center text-lg font-semibold ${campaignData.personaUpload === false ? 'border-purple-600 bg-purple-50' : 'border-gray-300'}`}>Нет</button>
+            <button onClick={() => setCampaignData(prev => ({ ...prev, personaUpload: true }))} className={`w-40 h-40 rounded-xl border-2 flex flex-col items-center justify-center text-lg font-semibold ${campaignData.personaUpload === true ? 'border-purple-600 bg-purple-50' : 'border-gray-300'}`}>Да</button>
+          </div>
+          {campaignData.personaUpload === true && (
+            <div className="mt-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Загрузить материалы</label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors">
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-100 mb-4">
+                  <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" /></svg>
+                </span>
+                <p className="text-gray-600 mb-2">Загрузите файл с вашим персонажем</p>
+                <input type="file" onChange={e => setCampaignData(prev => ({ ...prev, personaFile: e.target.files?.[0] || null }))} className="hidden" id="persona-upload" />
+                <label htmlFor="persona-upload" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 cursor-pointer transition-colors">
+                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" /></svg>
+                  Выбрать файл
+                </label>
+                {campaignData.personaFile && (
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center justify-center space-x-2">
+                      <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      <span className="text-sm text-green-700 font-medium">{campaignData.personaFile.name}</span>
+                    </div>
+                    <p className="text-xs text-green-600 mt-1">Файл загружен и готов к анализу</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {campaignData.personaUpload === false && (
+            <div className="mt-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Выберите шаблоны креативов</label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {currentTemplates.map(template => (
+                  <CreativeTemplate
+                    key={template.id}
+                    id={template.id}
+                    title={template.title}
+                    preview={template.preview}
+                    isSelected={campaignData.selectedTemplates.includes(template.id)}
+                    onSelect={handleTemplateSelect}
+                    imageUrl={template.imageUrl}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="mt-8 flex justify-between">
+            <button onClick={() => setStep(3)} className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors">Назад</button>
             <button
-              onClick={() => setStep(2)}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+              onClick={async () => {
+                setIsGenerating(true);
+                setGenerationProgress(0);
+                await generateCampaign();
+                setIsGenerating(false);
+                setStep(5);
+              }}
+              disabled={campaignData.personaUpload === null || (campaignData.personaUpload && !campaignData.personaFile)}
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
-              Назад
-            </button>
-            <button
-              onClick={generateCampaign}
-              disabled={campaignData.selectedTemplates.length === 0 || isGenerating}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all flex items-center space-x-2"
-            >
-              {isGenerating ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  <span>Создание кампании...</span>
-                </>
-              ) : (
-                <>
-                  <Zap className="h-4 w-4" />
-                  <span>Собрать кампанию</span>
-                </>
-              )}
+              Далее
             </button>
           </div>
         </div>
       )}
 
-      {/* Generation Progress */}
+      {/* Generation Progress (between 4 and 5) */}
       {isGenerating && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
@@ -568,27 +500,17 @@ export default function CampaignCreator() {
         </div>
       )}
 
-      {/* Step 4: Generated Campaign Results */}
-      {step === 4 && generatedCampaign && (
+      {/* Step 5: Final Result (Text, Creatives, Download, Restart) */}
+      {step === 5 && generatedCampaign && (
         <div className="space-y-6">
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Получаете PDF с информацией для запуска</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Информация для запуска кампании</h2>
               <button onClick={downloadAssets} className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                 <Download className="h-4 w-4" />
                 <span>Скачать PDF</span>
               </button>
             </div>
-
-            {/* Moderation Check */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-              <div className="flex items-center space-x-2 mb-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="font-semibold text-green-800">✅ Модерацию Фейсбука соответствует</span>
-              </div>
-            </div>
-
-            {/* Campaign Content */}
             <div className="space-y-8">
               {/* Ad Copy */}
               <div>
@@ -601,7 +523,6 @@ export default function CampaignCreator() {
                   ))}
                 </div>
               </div>
-
               {/* Audience Segments */}
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">2. Аудиторские сегменты</h3>
@@ -618,7 +539,6 @@ export default function CampaignCreator() {
                   ))}
                 </div>
               </div>
-
               {/* Budget Recommendations */}
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">3. Рекомендации по бюджету</h3>
@@ -631,7 +551,6 @@ export default function CampaignCreator() {
                   </div>
                 </div>
               </div>
-
               {/* Campaign Structure */}
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">4. Структура кампании</h3>
@@ -651,7 +570,6 @@ export default function CampaignCreator() {
                   </div>
                 </div>
               </div>
-
               {/* Tips */}
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">5. Советы</h3>
@@ -663,8 +581,7 @@ export default function CampaignCreator() {
                   ))}
                 </div>
               </div>
-
-              {/* Creative Examples */}
+              {/* Creative Examples (step 5, always show images from public) */}
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">6. Как собранные креативы выглядят в линию по статике</h3>
                 <div className="grid grid-cols-3 gap-4">
@@ -680,26 +597,49 @@ export default function CampaignCreator() {
                 </div>
               </div>
             </div>
-
             <div className="mt-8 flex justify-center">
               <button
                 onClick={() => {
                   setStep(1);
                   setCampaignData({
-                    offer: '',
+                    companyName: '',
+                    niche: '',
                     audience: '',
-                    files: [],
+                    offer: '',
+                    adNetwork: '',
+                    adGoal: '',
+                    adFormat: '',
+                    adStyle: '',
+                    textStyle: '',
                     fbReport: null,
-                    creativeFormat: null,
+                    creativeType: null,
+                    files: [],
+                    personaUpload: null,
+                    personaFile: null,
                     selectedTemplates: []
                   });
                   setGeneratedCampaign(null);
                 }}
                 className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
               >
-                Создать новую кампанию
+                Начать заново
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Generation Progress */}
+      {isGenerating && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <div className="text-center mb-6">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent mx-auto mb-4"></div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Создание кампании</h3>
+              <p className="text-sm text-gray-600">ИИ анализирует данные и создает персональную кампанию</p>
+            </div>
+            <ProgressBar progress={generationProgress} />
+            <p className="text-center text-sm text-gray-500">{generationProgress}% завершено</p>
           </div>
         </div>
       )}
